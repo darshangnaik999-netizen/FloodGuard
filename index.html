@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>FloodGuard AI</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Leaflet Map CSS -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    >
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+
+<header>
+
+    <h1>🌊 FloodGuard AI</h1>
+
+    <p>
+        Intelligent Flood Prediction & Emergency Response
+    </p>
+
+</header>
+
+
+<main>
+
+<!-- ================= HERO ================= -->
+
+<section class="hero">
+
+    <h2>🤖 AI-Powered Flood Risk Monitoring</h2>
+
+    <p>
+        Monitor rainfall, water levels and flood risk
+        to provide early warnings and improve emergency response.
+    </p>
+
+    <button onclick="updateFloodData()">
+        🚨 Check Flood Risk
+    </button>
+
+</section>
+
+
+<!-- ================= LIVE DASHBOARD ================= -->
+
+<section class="dashboard">
+
+    <h2>📊 Live Flood Monitoring</h2>
+
+    <div class="cards">
+
+        <div class="card">
+            <h3>🌧️ Rainfall</h3>
+            <p id="rainfall">0 mm</p>
+        </div>
+
+        <div class="card">
+            <h3>🌊 Water Level</h3>
+            <p id="waterLevel">0 cm</p>
+        </div>
+
+        <div class="card">
+            <h3>⚠️ Flood Risk</h3>
+            <p id="risk">SAFE</p>
+        </div>
+
+    </div>
+
+    <div class="center-button">
+
+        <button onclick="updateFloodData()">
+            🔄 Update Flood Data
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- ================= CHART ================= -->
+
+<section class="chart-section">
+
+    <h2>📈 Flood Monitoring History</h2>
+
+    <canvas id="floodChart"></canvas>
+
+</section>
+
+
+<!-- ================= MAP ================= -->
+
+<section class="map-section">
+
+    <h2>🗺️ Flood Risk Map</h2>
+
+    <p>
+        Monitor flood-risk areas on the map.
+    </p>
+
+    <button onclick="locateUser()">
+        📍 Detect My Location
+    </button>
+
+    <div id="map"></div>
+
+</section>
+
+
+<!-- ================= CITIZEN REPORT ================= -->
+
+<section class="report-section">
+
+    <h2>🚨 Report a Flood Situation</h2>
+
+    <p>
+        Citizens can report flooding, waterlogging,
+        blocked roads and other emergency situations.
+    </p>
+
+
+    <form id="floodReportForm">
+
+        <label for="reportLocation">
+            📍 Location
+        </label>
+
+        <input
+            type="text"
+            id="reportLocation"
+            placeholder="Enter location"
+            required
+        >
+
+
+        <button
+            type="button"
+            onclick="getReportLocation()"
+        >
+            📍 Use My Location
+        </button>
+
+
+        <label for="severity">
+            ⚠️ Flood Severity
+        </label>
+
+        <select id="severity" required>
+
+            <option value="">
+                Select severity
+            </option>
+
+            <option value="Low">
+                Low
+            </option>
+
+            <option value="Moderate">
+                Moderate
+            </option>
+
+            <option value="High">
+                High
+            </option>
+
+            <option value="Critical">
+                Critical
+            </option>
+
+        </select>
+
+
+        <label for="reportDescription">
+            📝 Describe the Situation
+        </label>
+
+        <textarea
+            id="reportDescription"
+            rows="5"
+            placeholder="Describe the flooding situation..."
+            required
+        ></textarea>
+
+
+        <label for="reportPhoto">
+            📷 Upload Flood Photo
+        </label>
+
+        <input
+            type="file"
+            id="reportPhoto"
+            accept="image/*"
+        >
+
+
+        <button type="submit">
+            📤 Submit Flood Report
+        </button>
+
+    </form>
+
+
+    <div id="reportMessage"></div>
+
+</section>
+
+
+<!-- ================= ADMIN LOGIN ================= -->
+
+<section class="admin-login">
+
+    <h2>🔐 Admin Login</h2>
+
+    <p>
+        Authorized administrators can access
+        citizen flood reports.
+    </p>
+
+
+    <input
+        type="text"
+        id="adminUsername"
+        placeholder="Enter username"
+    >
+
+
+    <input
+        type="password"
+        id="adminPassword"
+        placeholder="Enter password"
+    >
+
+
+    <button
+        type="button"
+        onclick="adminLogin()"
+    >
+        🔓 Login
+    </button>
+
+
+    <p id="loginMessage"></p>
+
+</section>
+
+
+<!-- ================= ADMIN DASHBOARD ================= -->
+
+<section
+    class="admin-section"
+    id="adminDashboard"
+    style="display: none;"
+>
+
+    <h2>🛡️ Emergency Admin Dashboard</h2>
+
+    <button
+        type="button"
+        onclick="adminLogout()"
+    >
+        🔒 Logout
+    </button>
+
+
+    <div id="reportsContainer">
+
+        <p>
+            No reports available.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ================= EMERGENCY ================= -->
+
+<section class="emergency">
+
+    <h2>🚨 Emergency Information</h2>
+
+    <p>
+        If flood risk becomes dangerous,
+        move to a safe location and follow
+        local emergency instructions.
+    </p>
+
+</section>
+
+</main>
+
+
+<!-- ================= FOOTER ================= -->
+
+<footer>
+
+    <p>
+        © 2026 FloodGuard AI
+    </p>
+
+</footer>
+
+
+<!-- Leaflet JS -->
+
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
+
+<!-- Project JavaScript -->
+
+<script src="script.js"></script>
+
+</body>
+
+</html>
